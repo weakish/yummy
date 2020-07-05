@@ -36,7 +36,7 @@ def index() -> Tuple[str, HttpHeaders]:
     Request: GET /ping
     Response: "pong"
     
-    Request: GET /hex/<hexadecimal_number_of_64_digits>
+    Request: GET /api/hex/<hexadecimal_number_of_64_digits>
     Response:
         {
             id: {
@@ -47,14 +47,14 @@ def index() -> Tuple[str, HttpHeaders]:
             # more
         }
     
-    Request: PATCH /hex/<hexadecimal_number_of_64_digits>
+    Request: PATCH /api/hex/<hexadecimal_number_of_64_digits>
         {
             rating: Optional[Literal[1, 2, 3, 4, 5]]
             comment: Optional[str]
             more_key: Optional[JsonValue]
         }
     Response:
-        Content-Location: /hex/<hexadecimal_number_of_64_digits>/<id>
+        Content-Location: /api/hex/<hexadecimal_number_of_64_digits>/<id>
         {
             rating
             comment
@@ -63,7 +63,7 @@ def index() -> Tuple[str, HttpHeaders]:
             }
         }
         
-    Request: GET /hex/<hexadecimal_number_of_64_digits>/<id>
+    Request: GET /api/hex/<hexadecimal_number_of_64_digits>/<id>
     Response:
         {
             rating
@@ -123,7 +123,7 @@ def yummy_hex(hex_64: str) -> Union[Dict[str, Review], Tuple[Review, HttpHeaders
                 }
                 db.collection('hex').document(hex64).collection('review').document(sha256).set(review)
                 return review, {
-                    'Content-Location': f'/hex/{hex64}/{sha256}'
+                    'Content-Location': f'/api/hex/{hex64}/{sha256}'
                 }
             else:
                 return {'error': 'rating (if specified) should be 1, 2, 3, 4, or 5'}, 400
