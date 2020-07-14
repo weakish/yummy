@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/ping", "destination": "/api/ping" },
+    { "source": "/hex/:hex_64", "destination": "/api/hex" },
+    { "source": "/hex/:hex_64/:sha_256", "destination": "/api/hex" }
+  ]
+}

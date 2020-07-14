@@ -1,9 +1,10 @@
 import hashlib
+import os
 from typing import Optional, Dict, Union, Tuple, Any
 
 import firebase_admin
-from firebase_admin import firestore
-from flask import Flask, jsonify, request
+from firebase_admin import firestore, credentials
+from flask import Flask, request
 from typing_extensions import Literal, TypedDict
 
 
@@ -20,66 +21,11 @@ class ErrorMessage(TypedDict):
 HttpError = Tuple[ErrorMessage, int]
 HttpHeaders = Dict[str, str]
 
-firebase_admin.initialize_app()
+cred = credentials.Certificate(os.environ['GOOGLE_CERT'])
+firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 app: Flask = Flask(__name__)
-
-
-@app.route('/')
-def index() -> Tuple[str, HttpHeaders]:
-    return '''
-    Yummy - an anonymous fictional review database for hex numbers
-    
-    Usage:
-    
-    Request: GET /ping
-    Response: "pong"
-    
-    Request: GET /api/hex/<hexadecimal_number_of_64_digits>
-    Response:
-        {
-            id: {
-                rating: Optional[Literal[1, 2, 3, 4, 5]]
-                comment: Optional[str]
-                more_key: Optional[JsonValue]
-            }
-            # more
-        }
-    
-    Request: PATCH /api/hex/<hexadecimal_number_of_64_digits>
-        {
-            rating: Optional[Literal[1, 2, 3, 4, 5]]
-            comment: Optional[str]
-            more_key: Optional[JsonValue]
-        }
-    Response:
-        Content-Location: /api/hex/<hexadecimal_number_of_64_digits>/<id>
-        {
-            rating
-            comment
-            meta: {
-                more_key
-            }
-        }
-        
-    Request: GET /api/hex/<hexadecimal_number_of_64_digits>/<id>
-    Response:
-        {
-            rating
-            comment
-            meta: {
-                more_key
-            }
-        }
-    ''', {
-        "Content-Type": "text/plain"
-    }
-
-
-@app.route('/ping')
-def pong() -> str:
-    return jsonify("pong")
 
 
 def ensure_hex64(hex64) -> Union[str, HttpError]:
@@ -143,3 +89,4 @@ def yummy_review(hex_64: str, sha_256: str) -> Union[Review, HttpError]:
             return sha256
     else:
         return hex64
+
