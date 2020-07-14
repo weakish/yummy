@@ -2,12 +2,12 @@ import base64
 import hashlib
 import json
 import os
-from typing import Optional, Dict, Union, Tuple, Any
+from typing import Optional, Dict, Union, Tuple, Any, Literal, TypedDict
 
 import firebase_admin
 from firebase_admin import firestore, credentials
 from flask import Flask, request
-from typing_extensions import Literal, TypedDict
+
 
 
 class Review(TypedDict):
